@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>THREE.CannonDebugRenderer example</title>
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+        body {
+                background-color: #ffffff;
+                margin: 0;
+                overflow: hidden;
+                font-family: arial;
+            }
+            #blocker {
+
+                position: absolute;
+
+                width: 100%;
+                height: 100%;
+
+                background-color: rgba(0,0,0,0.5);
+
+            }
+
+            #instructions {
+
+                width: 100%;
+                height: 100%;
+
+                display: -webkit-box;
+                display: -moz-box;
+                display: box;
+
+                -webkit-box-orient: horizontal;
+                -moz-box-orient: horizontal;
+                box-orient: horizontal;
+
+                -webkit-box-pack: center;
+                -moz-box-pack: center;
+                box-pack: center;
+
+                -webkit-box-align: center;
+                -moz-box-align: center;
+                box-align: center;
+
+                color: #ffffff;
+                text-align: center;
+
+                cursor: pointer;
+
+            }
+    </style>
+</head>
+<body>
+    <script src="../libs/Three.js"></script>
+    <script src="../build/cannon.js"></script>
+    <div id="blocker">
+
+            <div id="instructions">
+                <span style="font-size:40px">Clique para iniciar!</span>
+                <br />
+                (W A S D - Movimentação | Barra de Espaço - Pulo | Mouse - Explorar | Clique - ATIRAR!!)
+            </div>
+
+    </div>
+
+    <script>
+        var fbala, cbala, world, materialFisico, paredes=[], balas=[], balasm=[], torus, torusm; 
+        //sphereShape, sphereBody, world, physicsMaterial, walls=[], balls=[], ballMeshes=[], boxes=[], boxMeshes=[];
+            var camera, scene, renderer;
+            var geometry, material, mesh;
+            var controls,time = Date.now();
+
+            var blocker = document.getElementById( 'blocker' );
+            var instructions = document.getElementById( 'instructions' );
+            var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document; //verificando se tem pointer lock
+
+            if(havePointerLock){
+                var element =  document.body;
+                var changeplock =  function (event){
+                    if ( document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element ) {
+
+                        controls.enabled = true;
+
+                        blocker.style.display = 'none';
+
+                    } else {
+
+                        controls.enabled = false;
+
+                        blocker.style.display = '-webkit-box';
+                        blocker.style.display = '-moz-box';
+                        blocker.style.display = 'box';
+
+                        instructions.style.display = '';
+
+                    }
+                }
+            }
+            var plockerror = function ( event ) {
+                    instructions.style.display = '';
+            }
+            //Escuto as mudanças de estado de pointer lock
+                document.addEventListener( 'pointerlockchange', changeplock, false );
+                document.addEventListener( 'mozpointerlockchange', changeplock, false );
+                document.addEventListener( 'webkitpointerlockchange', changeplock, false );
+
+                document.addEventListener( 'pointerlockerror', plockerror, false );
+                document.addEventListener( 'mozpointerlockerror', plockerror, false );
+                document.addEventListener( 'webkitpointerlockerror', plockerror, false );
+
+                instructions.addEventListener( 'click', function ( event ) { //se houver o clique, remover as instruções
+                    instructions.style.display = 'none';
+
+                    // peço ao navegador pra lockar os ponteiros
+                    element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
+
+                        document.addEventListener( 'fullscreenchange', fullscreenchange, false );
+                        document.addEventListener( 'mozfullscreenchange', fullscreenchange, false );
+
+                        element.requestFullscreen = element.requestFullscreen || element.mozRequestFullscreen || element.mozRequestFullScreen || element.webkitRequestFullscreen;
+
+                        element.requestFullscreen();
+
+                    } else {
+
+                        element.requestPointerLock();
+
+                    }
+
+                }, false );
+
+            initThree();
+            initCannon();
+            animate();
+
+         function initCannon(){
+            world = new CANNON.world();
+            world.gravity.set(0,-10,0);
+            world.broadphase = new CANNON.NaiveBroadphase();
+            world.solver.iterations = 15;
+
+         }
+            
+    </script>
+</body>
+</html>
